@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.*;
 import android.content.res.Resources;
 import android.os.IBinder;
+import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.widget.Toast;
@@ -308,14 +309,23 @@ public class ShadowApplication extends ShadowContextWrapper {
      */
     @Override
     @Implementation
-    public void sendBroadcast(Intent intent) {
+    public void sendBroadcast(final Intent intent) {
         broadcastIntents.add(intent);
 		
         List<Wrapper> copy = new ArrayList<Wrapper>();
         copy.addAll(registeredReceivers);
-        for (Wrapper wrapper : copy) {
+        for (final Wrapper wrapper : copy) {
             if (wrapper.intentFilter.matchAction(intent.getAction())) {
-                wrapper.broadcastReceiver.onReceive(realApplication, intent);
+                if (null != wrapper.handler) {
+                    wrapper.handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            wrapper.broadcastReceiver.onReceive(realApplication, intent);
+                        }
+                    });
+                } else {
+                    wrapper.broadcastReceiver.onReceive(realApplication, intent);
+                }
             }
         }
     }
@@ -342,8 +352,12 @@ public class ShadowApplication extends ShadowContextWrapper {
     }
 
     Intent registerReceiverWithContext(BroadcastReceiver receiver, IntentFilter filter, Context context) {
+        return registerReceiverWithContext(receiver, filter, context, null);
+    }
+
+    Intent registerReceiverWithContext(BroadcastReceiver receiver, IntentFilter filter, Context context, Handler handler) {
         if (receiver != null) {
-            registeredReceivers.add(new Wrapper(receiver, filter, context));
+            registeredReceivers.add(new Wrapper(receiver, filter, context, handler));
         }
         return getStickyIntent(filter);
     }
@@ -490,11 +504,13 @@ public class ShadowApplication extends ShadowContextWrapper {
         public IntentFilter intentFilter;
         public Context context;
         public Throwable exception;
+        public Handler handler;
 
-        public Wrapper(BroadcastReceiver broadcastReceiver, IntentFilter intentFilter, Context context) {
+        public Wrapper(BroadcastReceiver broadcastReceiver, IntentFilter intentFilter, Context context, Handler handler) {
             this.broadcastReceiver = broadcastReceiver;
             this.intentFilter = intentFilter;
             this.context = context;
+            this.handler = handler;
             exception = new Throwable();
         }
 
@@ -508,6 +524,10 @@ public class ShadowApplication extends ShadowContextWrapper {
 
         public Context getContext() {
             return context;
+        }
+
+        public Handler getHandler() {
+            return handler;
         }
     }
 }
