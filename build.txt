@@ -1,5 +1,6 @@
+# to build
 ant prepare-travis-ci
 mvn install -DskipTests
 
-to install into the local repository:
-$ mvn install:install-file -Dfile=/home/tomer/robolectric/target/robolectric-1.2-SNAPSHOT-PRIV.jar -DgroupId=com.pivotallabs -DartifactId=robolectric -Dversion=1.2-SNAPSHOT-PRIV -Dpackaging=jar -DlocalRepositoryPath=/home/tomer/workspace/mavenRepository
+# to install into the local repository:
+mvn install:install-file -Dfile=/home/tomer/robolectric/target/robolectric-1.2-SNAPSHOT-PRIV.jar -DgroupId=com.pivotallabs -DartifactId=robolectric -Dversion=1.2-SNAPSHOT-PRIV -Dpackaging=jar -DlocalRepositoryPath=/home/tomer/workspace/mavenRepository

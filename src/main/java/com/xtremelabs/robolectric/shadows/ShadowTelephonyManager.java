@@ -1,5 +1,6 @@
 package com.xtremelabs.robolectric.shadows;
 
+import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import com.xtremelabs.robolectric.internal.Implementation;
@@ -17,6 +18,9 @@ public class ShadowTelephonyManager {
     private boolean readPhoneStatePermission = true;
     private int phoneType = TelephonyManager.PHONE_TYPE_GSM;
     private String simCountryIso;
+    private CellLocation cellLocation;
+    private int dataState;
+    private int dataActivity;
 
     @Implementation
 	public void listen(PhoneStateListener listener, int events) {
@@ -106,5 +110,32 @@ public class ShadowTelephonyManager {
     
     public void setPhoneType(int phoneType) {
     	this.phoneType = phoneType;
+    }
+    
+    @Implementation
+    public int getDataState() {
+	return this.dataState;
+    }
+    
+    public void setDataState(int dataState) {
+	this.dataState = dataState;
+    }
+    
+    @Implementation
+    public int getDataActivity() {
+	return this.dataActivity;
+    }
+    
+    public void setDataActivity(int dataActivity) {
+	this.dataActivity = dataActivity;
+    }
+
+    @Implementation
+    public CellLocation getCellLocation() {
+	return this.cellLocation;
+    }
+    
+    public void setCellLocation(CellLocation cellLocation) {
+	this.cellLocation = cellLocation;
     }
 }
