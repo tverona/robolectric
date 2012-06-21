@@ -27,6 +27,7 @@ public class ShadowWifiManager {
     private Map<Integer, WifiConfiguration> networkIdToConfiguredNetworks = new LinkedHashMap<Integer, WifiConfiguration>();
     public boolean wasSaved;
     private Pair<Integer, Boolean> lastEnabledNetwork;
+    private int wifiState = WifiManager.WIFI_STATE_UNKNOWN;
 
     @Implementation
     public boolean setWifiEnabled(boolean wifiEnabled) {
@@ -145,6 +146,15 @@ public class ShadowWifiManager {
     @Implementation
     public boolean startScan() {
         return true;
+    }
+    
+    @Implementation
+    public int getWifiState() {
+        return wifiState;
+    }
+    
+    public void setWifiState(int wifiState) {
+        this.wifiState = wifiState;
     }
 
     @Implements(WifiManager.WifiLock.class)
