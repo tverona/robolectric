@@ -142,6 +142,10 @@ public class ShadowWifiManager {
         return lastEnabledNetwork;
     }
 
+    @Implementation
+    public boolean startScan() {
+        return true;
+    }
 
     @Implements(WifiManager.WifiLock.class)
     public static class ShadowWifiLock {
