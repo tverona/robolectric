@@ -47,7 +47,7 @@ public class ShadowLooper {
             while (!looper.quit) {
                 try {
                     synchronized (looper) {
-                        looper.wait();
+                        looper.wait(1000);
                     }
                 } catch (InterruptedException ignore) {
                 }
